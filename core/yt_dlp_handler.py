@@ -35,8 +35,16 @@ def build_format_string(quality: str, fmt: str) -> str:
 
 
 def download_video(url: str, output_path: str, format_str: str, callback=None, 
-                   cancel_flag=None) -> bool:
+                   cancel_flag=None, file_format: str = "") -> bool:
     """Download video using yt-dlp with progress tracking.
+    
+    Args:
+        url: YouTube URL
+        output_path: Output file path template
+        format_str: yt-dlp format string
+        callback: Progress callback function
+        cancel_flag: Threading event to cancel download
+        file_format: File format (mp3, m4a, mp4, etc.) for metadata handling
     
     Returns:
         bool: True if successful, False otherwise
@@ -47,8 +55,16 @@ def download_video(url: str, output_path: str, format_str: str, callback=None,
         "--no-playlist",
         "--newline",
         "-o", output_path,
-        url
     ]
+    
+    # Add metadata embedding for audio formats
+    if file_format.lower() in ("mp3", "m4a", "opus", "vorbis"):
+        cmd.extend([
+            "--embed-metadata",      # Embedea título, artista, descripción, fecha, etc.
+            "--embed-thumbnail",     # Embedea la carátula en el archivo
+        ])
+    
+    cmd.append(url)
 
     try:
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,

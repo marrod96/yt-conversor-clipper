@@ -572,7 +572,8 @@ class App(ctk.CTk):
                     self._update_progress(0.05 + progress * 0.55, "Descargando...")
 
             ok = download_video(p["url"], temp_path, p["fmt_str"],
-                                callback=dl_cb, cancel_flag=self._cancel_flag)
+                                callback=dl_cb, cancel_flag=self._cancel_flag,
+                                file_format=p["fmt"])
 
             if not ok:
                 if self._cancel_flag.is_set():

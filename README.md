@@ -102,11 +102,46 @@ python run_with_reload.py
 
 The file `dist\YTClipper.exe` is **self-contained** (includes Python and libraries).
 
-However, the target PC needs to have **yt-dlp** and **ffmpeg** installed and in PATH,
-as they are external tools that the .exe calls by name.
+However, the target PC needs to have **yt-dlp**, **ffmpeg**, and **VLC** installed and in PATH,
+as they are external tools that the app calls by name.
 
-**Solution for end users:** include `yt-dlp.exe` and `ffmpeg.exe` in the same folder
-as `YTClipper.exe` and distribute all three together in a ZIP.
+### Automatic Installation (recommended for end users)
+
+1. Copy `dist\YTClipper.exe` and `install.bat` to the same folder
+2. End user runs `install.bat` (as Administrator)
+3. It will automatically:
+   - ✓ Detect if yt-dlp, ffmpeg, and VLC are already installed
+   - ✓ Skip installation if they exist
+   - ✓ Download and install missing dependencies
+   - ✓ Launch YTClipper when done
+
+**To distribute:** Create a ZIP with:
+```
+YTClipper-Setup.zip
+├── YTClipper.exe
+├── install.bat
+└── README.txt (instructions)
+```
+
+### Manual Distribution (alternative)
+
+If you prefer to include all tools in the package:
+
+1. Download offline:
+   - `yt-dlp.exe` from https://github.com/yt-dlp/yt-dlp/releases
+   - `ffmpeg.exe` and `ffprobe.exe` from https://www.gyan.dev/ffmpeg/builds/
+   - `vlc-installer.exe` from https://get.videolan.org/vlc/
+
+2. Include everything in the ZIP:
+   ```
+   YTClipper-Complete.zip
+   ├── YTClipper.exe
+   ├── yt-dlp.exe
+   ├── ffmpeg.exe
+   ├── ffprobe.exe
+   ├── vlc-installer.exe
+   └── install-local.bat
+   ```
 
 ---
 

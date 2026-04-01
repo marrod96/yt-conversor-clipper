@@ -1,0 +1,95 @@
+YTCLIPPER - AUTOMATIC INSTALLATION GUIDE
+==========================================
+
+OPTION 1: AUTOMATIC INSTALLATION (with internet)
+=================================================
+
+Requirements:
+ - Windows 7 or higher
+ - Administrator privileges
+ - Internet connection
+
+Instructions:
+1. Right-click "install.bat" and select "Run as Administrator"
+2. The script will automatically:
+   - Detect if yt-dlp, ffmpeg, and VLC are already installed
+   - Skip installation if they exist (no duplicate installs)
+   - Download and install missing dependencies
+   - Launch YTClipper
+
+This script is quiet and fast. It checks before installing, so repeated
+runs won't re-download already installed tools.
+
+
+OPTION 2: LOCAL INSTALLATION (offline / USB)
+==============================================
+
+If you're distributing via USB or have slow internet, use this approach:
+
+1. Download these files:
+   - yt-dlp.exe (from https://github.com/yt-dlp/yt-dlp/releases/latest)
+   - ffmpeg-release-essentials.zip (from https://www.gyan.dev/ffmpeg/builds/)
+   - vlc-3.0.21-win64.exe (from https://get.videolan.org/vlc/)
+
+2. Extract ffmpeg-release-essentials.zip and copy:
+   - ffmpeg.exe → root folder
+   - ffprobe.exe → root folder
+
+3. Folder structure should be:
+   YTClipper-Setup/
+   ├── YTClipper.exe
+   ├── yt-dlp.exe
+   ├── ffmpeg.exe
+   ├── ffprobe.exe
+   ├── vlc-installer.exe
+   └── install-local.bat
+
+4. Right-click "install-local.bat" → "Run as Administrator"
+
+The script will:
+   - Check for existing installations
+   - Copy yt-dlp and ffmpeg to System32
+   - Run the VLC installer
+   - Launch YTClipper
+
+
+TROUBLESHOOTING
+===============
+
+Q: "Administrator privileges required"
+A: Right-click the .bat file and select "Run as Administrator"
+
+Q: "yt-dlp: command not found" after install
+A: Restart your computer or open a new command prompt
+
+Q: VLC installer doesn't launch
+A: Run it manually from the folder with /S flag:
+   vlc-installer.exe /L=1033 /S
+
+Q: Script says "Cannot access the path"
+A: Check that YTClipper.exe is in the same folder as install.bat
+
+Q: Installation fails with network error
+A: Check your internet connection and try again
+
+
+FOR DEVELOPERS
+==============
+
+To package YTClipper for distribution:
+
+1. Build the .exe:
+   pyinstaller ytclipper.spec
+
+2. Copy dist\YTClipper.exe to the same folder as install.bat
+
+3. Create a ZIP with:
+   - YTClipper.exe
+   - install.bat
+   - install-local.bat (optional)
+   - This file (README.txt)
+
+4. Share the ZIP with end users
+
+When users run install.bat, all dependencies will be automatically
+detected and installed if needed.
