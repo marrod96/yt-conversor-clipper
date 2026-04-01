@@ -29,7 +29,8 @@ class ChangeHandler(FileSystemEventHandler):
 if __name__ == "__main__":
     handler = ChangeHandler()
     observer = Observer()
-    observer.schedule(handler, ".", recursive=False)
+    # Watch all files under project recursively, no solo ytclipper.py
+    observer.schedule(handler, ".", recursive=True)
     observer.start()
     try:
         observer.join()
