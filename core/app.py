@@ -553,7 +553,10 @@ class App(ctk.CTk):
 
     # ── Worker ────────────────────────────────────────────────────────────────
     def _job_worker(self, p: dict):
-        temp_path = os.path.join(p["dest"], "_ytclipper_temp.mp4")
+        if p["fmt"] in ("mp3", "m4a"):
+            temp_path = os.path.join(p["dest"], f"_ytclipper_temp.{p['fmt']}")
+        else:
+            temp_path = os.path.join(p["dest"], "_ytclipper_temp.mp4")
         out_path  = os.path.join(p["dest"], f"{p['name']}.{p['fmt']}")
 
         try:
@@ -578,7 +581,23 @@ class App(ctk.CTk):
             if not ok:
                 if self._cancel_flag.is_set():
                     self._finish(cancelled=True); return
-                self._finish(error="yt-dlp terminó con error. ¿URL válida? ¿yt-dlp instalado?")
+                
+                # Build error message based on format
+                if audio_only:
+                    error_msg = ("Fallo en descarga/conversión a audio.\n\n"
+                                "Verifica que esté instalado:\n"
+                                "  • ffmpeg (y ffprobe)\n"
+                                "  • yt-dlp (actualizado)\n\n"
+                                "Revisa el REGISTRO para detalles específicos.")
+                else:
+                    error_msg = ("yt-dlp falló al descargar el video.\n\n"
+                                "Posibles causas:\n"
+                                "• URL inválida o vídeo restringido/privado\n"
+                                "• Problema de conexión a internet\n"
+                                "• yt-dlp desactualizado (ejecuta: yt-dlp -U)\n"
+                                "• Contenido bloqueado geograficamente\n\n"
+                                "Revisa el REGISTRO para más detalles.")
+                self._finish(error=error_msg)
                 return
 
             if audio_only:
@@ -608,8 +627,7 @@ class App(ctk.CTk):
                 self._log(f"✔ Video guardado: {out_path}")
 
         except FileNotFoundError as e:
-            tool = "yt-dlp" if "yt-dlp" in str(e) else "ffmpeg"
-            self._finish(error=f"'{tool}' no encontrado. ¿Está instalado y en el PATH?")
+            self._finish(error=str(e))
             return
         except Exception as e:
             self._finish(error=str(e))

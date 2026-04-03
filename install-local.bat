@@ -42,7 +42,7 @@ if not exist "vlc-installer.exe" (
 )
 
 REM Install yt-dlp
-echo [1/3] Installing yt-dlp...
+echo [1/4] Installing yt-dlp...
 where yt-dlp >nul 2>nul
 if errorlevel 1 (
     copy "yt-dlp.exe" "C:\Windows\System32\" >nul 2>nul
@@ -55,25 +55,48 @@ if errorlevel 1 (
     echo        ✓ yt-dlp already installed
 )
 
-REM Install ffmpeg
+REM Install ffmpeg and ffprobe
 echo.
-echo [2/3] Installing ffmpeg...
+echo [2/4] Installing ffmpeg and ffprobe...
 where ffmpeg >nul 2>nul
-if errorlevel 1 (
+set has_ffmpeg=!errorlevel!
+where ffprobe >nul 2>nul
+set has_ffprobe=!errorlevel!
+
+if !has_ffmpeg! equ 0 if !has_ffprobe! equ 0 (
+    echo        ✓ ffmpeg and ffprobe already installed
+) else (
+    echo        ⏳ Copying ffmpeg.exe and ffprobe.exe...
     copy "ffmpeg.exe" "C:\Windows\System32\" >nul 2>nul
-    copy "ffprobe.exe" "C:\Windows\System32\" >nul 2>nul
     if errorlevel 1 (
-        echo ✗ Failed to copy ffmpeg files
+        echo ✗ Failed to copy ffmpeg.exe
         goto error
     )
-    echo        ✓ ffmpeg installed
-) else (
-    echo        ✓ ffmpeg already installed
+    copy "ffprobe.exe" "C:\Windows\System32\" >nul 2>nul
+    if errorlevel 1 (
+        echo ✗ Failed to copy ffprobe.exe
+        goto error
+    )
+    echo        ✓ ffmpeg and ffprobe installed
+    
+    REM Verify both files exist
+    if exist "C:\Windows\System32\ffmpeg.exe" (
+        echo        ✓ ffmpeg.exe verified in System32
+    ) else (
+        echo        ✗ ffmpeg.exe verification failed
+        goto error
+    )
+    if exist "C:\Windows\System32\ffprobe.exe" (
+        echo        ✓ ffprobe.exe verified in System32
+    ) else (
+        echo        ✗ ffprobe.exe verification failed
+        goto error
+    )
 )
 
 REM Install VLC
 echo.
-echo [3/3] Installing VLC...
+echo [3/4] Installing VLC...
 where vlc >nul 2>nul
 if errorlevel 1 (
     echo        ⏳ Running VLC installer (this may take a minute)...
@@ -82,6 +105,12 @@ if errorlevel 1 (
 ) else (
     echo        ✓ VLC already installed
 )
+
+REM Refresh PATH
+echo.
+echo [4/4] Refreshing system PATH...
+setx PATH "%PATH%"
+echo        ✓ PATH refreshed
 
 echo.
 echo ====================================
